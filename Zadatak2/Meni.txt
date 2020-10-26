@@ -1,0 +1,12 @@
+#########################################
+
+1) Dodaj novi element na pocetak liste
+2) Ispisi listu
+3) Dodaj novi element na kraj liste
+4) Pronadi element prema prezimenu
+5) Brisi odredeni element
+-1) Izlaz
+
+#########################################
+
+Vas izbor:	
