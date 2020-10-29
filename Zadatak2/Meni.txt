@@ -6,6 +6,11 @@
 3) Dodaj novi element na kraj liste
 4) Pronadi element prema prezimenu
 5) Brisi odredeni element
+6) Dodaj novi nakon nekog elementa
+7) Dodaj novi prije nekog elementa
+8) Sortiraj listu po prezimenima
+9) Upisi listu u datoteku
+10) Citaj listu iz datoteke
 -1) Izlaz
 
 #########################################

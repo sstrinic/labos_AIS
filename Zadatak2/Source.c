@@ -23,6 +23,11 @@ void Brisi(Pozicija, char[]);
 void Meni(Pozicija, int);
 void CleanExit(Pozicija);
 void IspisMeni();
+void AddNewAfterElement(char[], Pozicija);
+void AddNewBeforeElement(char[], Pozicija);
+void ListToFile(Pozicija);
+void ReadFile();
+void SortListBySName(Pozicija);
 
 int main()
 {
@@ -177,6 +182,31 @@ void Meni(Pozicija p, int x)
 		Brisi(p, prezime);
 		break;
 	}
+	case 6:
+	{
+		AddNewAfterElement(prezime, p);
+		break;
+	}
+	case 7:
+	{
+		AddNewBeforeElement(prezime, p);
+		break;
+	}
+	case 8:
+	{
+		SortListBySName(p);
+		break;
+	}
+	case 9:
+	{
+		ListToFile(p);
+		break;
+	}
+	case 10:
+	{
+		ReadFile();
+		break;
+	}
 	case -1:
 		exit(1);
 	default:
@@ -194,4 +224,66 @@ void CleanExit(Pozicija p)
 		free(temp);
 	}
 	free(p);
+}
+
+void SortListBySName(Pozicija p)
+{
+	Pozicija q,prev_q,temp,end;
+	end = NULL;
+	while (p->next != end)
+	{
+		prev_q = p;
+		q = p->next;
+		while (q->next != end)
+		{
+			if (strcmp(q->prezime, q->next->prezime) > 0)
+			{
+				temp = q->next;
+				prev_q->next = temp;
+				q->next = temp->next;
+				temp->next = q;
+				q = temp;
+			}
+			prev_q = q;
+			q = q->next;
+		}
+		end = q;
+	}
+}
+
+void AddNewAfterElement(char prezime[],Pozicija p)
+{
+	p = Trazi(prezime, p);
+	UnosPocetak(p);
+}
+
+void AddNewBeforeElement(char prezime[], Pozicija p)
+{
+	p = TraziPrethodni(prezime, p);
+	UnosPocetak(p);
+}
+
+void ListToFile(Pozicija p)
+{
+	FILE* f;
+	f = fopen("Lista.txt", "w");
+	if (f == NULL)
+		exit(1);
+	fprintf(f, "%s %s %d\n", p->ime, p->prezime, p->godina);
+	fclose(f);
+}
+
+void ReadFile()
+{
+	FILE* f;
+	char ime[15];
+	char prezime[15];
+	int godina;
+	f = fopen("Lista.txt", "r");
+	while (!feof(f))
+	{
+		fscanf(f, "%s %s %d\n", ime, prezime, &godina);
+		printf("\n%s	%s	%d", ime, prezime, godina);
+	}
+	fclose(f);
 }
