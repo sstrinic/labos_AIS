@@ -41,7 +41,7 @@ int main()
 		scanf(" %d", &x);
 		Meni(&head, x);
 	} while (x != -1);
-	CleanExit(&head);
+	printf("Memorija ociscena i gasim sve...");
 	return 0;
 }
 
@@ -169,7 +169,7 @@ void Meni(Pozicija p, int x)
 	{
 		printf("\nUpisite prezime za pronaci: ");
 		scanf("%s", prezime);
-		p=Trazi(prezime, p);
+		p = Trazi(prezime, p);
 		printf("\nIme:	%s", p->ime);
 		printf("\nPrezime:	%s", p->prezime);
 		printf("\nGodina:	%d", p->godina);
@@ -184,11 +184,15 @@ void Meni(Pozicija p, int x)
 	}
 	case 6:
 	{
+		printf("\nUpisite prezime nakon kojeg zelite dodati novi: ");
+		scanf("%s", prezime);
 		AddNewAfterElement(prezime, p);
 		break;
 	}
 	case 7:
 	{
+		printf("\nUpisite prezime prije kojeg zelite dodati novi: ");
+		scanf("%s", prezime);
 		AddNewBeforeElement(prezime, p);
 		break;
 	}
@@ -199,7 +203,7 @@ void Meni(Pozicija p, int x)
 	}
 	case 9:
 	{
-		ListToFile(p);
+		ListToFile(p->next);
 		break;
 	}
 	case 10:
@@ -208,7 +212,12 @@ void Meni(Pozicija p, int x)
 		break;
 	}
 	case -1:
-		exit(1);
+	{
+		if (p->next == NULL)
+			break;
+		CleanExit(p->next);
+		break;
+	}
 	default:
 		printf("Doslo je do greske pri izboru...\n");
 	}
@@ -216,14 +225,15 @@ void Meni(Pozicija p, int x)
 
 void CleanExit(Pozicija p)
 {
-	Pozicija temp = p->next;
-	while (p->next != NULL)
+	if (p->next == NULL)
 	{
-		temp = p->next;
-		p->next = temp->next;
-		free(temp);
+ 		free(p);
 	}
-	free(p);
+	else 
+	{
+		p = p->next;
+		CleanExit(p);
+	}
 }
 
 void SortListBySName(Pozicija p)
@@ -269,7 +279,11 @@ void ListToFile(Pozicija p)
 	f = fopen("Lista.txt", "w");
 	if (f == NULL)
 		exit(1);
-	fprintf(f, "%s %s %d\n", p->ime, p->prezime, p->godina);
+	while (p != NULL)
+	{
+		fprintf(f, "%s %s %d\n", p->ime, p->prezime, p->godina);
+		p = p->next;
+	}
 	fclose(f);
 }
 
