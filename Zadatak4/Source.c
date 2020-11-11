@@ -18,6 +18,7 @@ void PrintPoly(Position);
 void CleanExit(Position);
 void SumPoly(Position, Position, Position);
 void MulPoly(Position, Position, Position);
+void CheckEnd(Position);
 
 int main()
 {
@@ -29,25 +30,39 @@ int main()
 
 	ReadPoly(&P);
 	ReadPoly(&Q);
-	SumPoly(P.Next, Q.Next, &M);
-	MulPoly(P.Next, Q.Next, &N);
-
 	printf("\nP(x) = ");
 	PrintPoly(P.Next);
 	printf("\nQ(x) = ");
 	PrintPoly(Q.Next);
-	printf("\nM(x) = ");
+
+	SumPoly(P.Next, Q.Next, &M);
+	printf("\n\nM(x) = ");
 	PrintPoly(M.Next);
+
+	MulPoly(P.Next, Q.Next, &N);
 	printf("\nN(x) = ");
 	PrintPoly(N.Next);
 
-	CleanExit(&P);
-	CleanExit(&Q);
-	CleanExit(&M);
-	CleanExit(&N);
+	CheckEnd(&P);
+	printf("\nP ociscen!\n");
+
+	CheckEnd(&Q);
+	printf("\nQ ociscen!\n");
+	
+	CheckEnd(&N);
+	printf("\nN ociscen!\n");
+
+	CheckEnd(&M);
+	printf("\nM ociscen!\n");
+
 	return 0;
 }
 
+void CheckEnd(Position p)
+{
+	if (p->Next != NULL)
+		CleanExit(p->Next);
+}
 Position AllocationMem()
 {
 	Position el;
@@ -55,17 +70,19 @@ Position AllocationMem()
 	return el;
 }
 
-void ReadPoly(Position p)
+void ReadPoly(Position P)
 {
 	FILE* f;
-	Position q;
-	char ime_dat[30]="Polinom1.txt";
+	Position q, k;
+	k = P;
+	char ime_dat[30] = "pol1.txt";
 	printf("Upisite naziv datoteke s polinomom: ");
 	scanf("%s", ime_dat);
 	f = fopen(ime_dat, "r");
-	if(f==NULL)
+	if (f == NULL)
 	{
 		printf("Greska datoteke %s!!", ime_dat);
+		exit(1);
 	}
 	else
 	{
@@ -77,25 +94,27 @@ void ReadPoly(Position p)
 				free(q);
 			else
 			{
-				while (p->Next != NULL && p->Next->Exp > q->Exp)
-					p = p->Next;
-				if (p->Next != NULL && p->Next->Exp == q->Exp)
+				while (P->Next != NULL && P->Next->Exp > q->Exp)
+					P = P->Next;
+				if (P->Next != NULL && P->Next->Exp == q->Exp)
 				{
-					p->Next->Koef += q->Koef;
+					P->Next->Koef += q->Koef;
 					free(q);
-					if (p->Koef == 0)
+					if (P->Koef == 0)
 					{
-						q = p->Next;
-						p->Next = q->Next;
+						q = P->Next;
+						P->Next = q->Next;
 						free(q);
 					}
 				}
 				else
 				{
-					q->Next = p->Next;
-					p->Next = q;
+						q->Next = P->Next;
+						P->Next = q;
 				}
+				
 			}
+			P = k;
 		}
 		fclose(f);
 	}
@@ -121,7 +140,7 @@ void PrintPoly(Position p)
 
 void SumPoly(Position P, Position Q, Position M)
 {
-	Position z;
+	Position z,q;
 	while (P != NULL && Q != NULL)
 	{
 		z = AllocationMem();
@@ -139,53 +158,84 @@ void SumPoly(Position P, Position Q, Position M)
 		}
 		else
 		{
-			z->Exp = P->Exp;
+			z->Exp = Q->Exp;
 			z->Koef = P->Koef + Q->Koef;
+			P = P->Next;
+			Q = Q->Next;
 		}
 		M->Next = z;
 		M = M->Next;
 		M->Next = NULL;
 	}
+	
 	while (P != NULL)
 	{
 		z = AllocationMem();
-		z = P;
+		z->Exp = P->Exp;
+		z->Koef = P->Koef;
+		P = P->Next;
+
+		z->Next = M->Next;
 		M->Next = z;
 		M = M->Next;
-		M->Next = NULL;
-		P = P->Next;
+		
 	}
 	while (Q != NULL)
 	{
-		z = AllocationMem();
-		z = Q;
-		M->Next = z;
-		M = M->Next;
-		M->Next = NULL;
+		q = AllocationMem();
+		q->Exp = Q->Exp;
+		q->Koef = Q->Koef;
 		Q = Q->Next;
+
+		q->Next = M->Next;
+		M->Next = q;
+		M = M->Next;
 	}
 }
 
 void MulPoly(Position P,Position Q,Position N)
 {
-	while (P->Next != NULL)
+	Position q,o,tp;
+	tp = N;
+	while (P != NULL)
 	{
-		while (Q->Next != NULL)
+		o = Q;
+		while (o!= NULL)
 		{
+			q = AllocationMem();
 
+			q->Exp = P->Exp + o->Exp;
+			q->Koef = P->Koef * o->Koef;
+
+			while (N->Next != NULL && N->Next->Exp > q->Exp)
+				N = N->Next;
+
+			if (N->Next != NULL && N->Next->Exp == q->Exp)
+			{
+				N->Next->Koef += q->Koef;
+				free(q);
+			}
+			else
+			{
+					q->Next = N->Next;
+					N->Next = q;
+			}
+			o = o->Next;
+			N = tp;
 		}
+		P = P->Next;
 	}
 }
 
-void CleanExit(Position P)
+void CleanExit(Position p)
 {
-	if (P->Next == NULL)
+	if (p->Next == NULL)
 	{
-		free(P);
+		free(p);
 	}
 	else
 	{
-		P = P->Next;
-		CleanExit(P);
+		p = p->Next;
+		CleanExit(p);
 	}
 }
