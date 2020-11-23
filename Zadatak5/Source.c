@@ -141,7 +141,8 @@ void PrintList(Position P)
 
 void ListUnion(Position P, Position Q, Position N)
 {
-	Position q;
+	Position q,z;
+	z = NULL;
 	while (P != NULL && Q != NULL) {
 		if (P->element < Q->element) {
 			q = AllocationMem();
@@ -169,6 +170,20 @@ void ListUnion(Position P, Position Q, Position N)
 			Q = Q->Next;
 		}
 		N = N->Next;
+	}
+	if (P != NULL)
+		z = P;
+	else if (Q != NULL)
+		z = Q;
+
+	while (z != NULL)
+	{
+		q = AllocationMem();
+
+		q->element = z->element;
+		q->Next = N->Next;
+		N->Next = q;
+		z = z->Next;
 	}
 }
 
