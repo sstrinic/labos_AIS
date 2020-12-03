@@ -1,0 +1,12 @@
+
+################################
+
+1) STOG			POP
+2) STOG random  PUSH
+3) RED			POP
+4) RED	random  PUSH
+5) STOG ispis
+6) RED  ispis
+-1) IZLAZ
+
+################################
