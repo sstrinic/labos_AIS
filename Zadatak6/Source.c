@@ -95,18 +95,34 @@ void PushS(Position p)
 {
 	Position q;
 	q = AllocationMem();
-	q->element = rand() % (100 + 1);;
+	q->element = rand() % 90 + 10;
 	q->Next = p->Next;
 	p->Next = q;
 	if (p->Next->element != NULL)
-		printf("\nUspjesno dodan random element!\n");
+		printf("\nUspjesno dodan random element na niz!\n");
 }
 
 void PushR(Position p)
 {
+	Position q;
+	static Position last;
+
+	if (p->Next == NULL)
+		last = p;
+
+	q = AllocationMem();
+
+	q->element = rand() % 90 + 10;
+	q->Next = last->Next;
+	last->Next = q;
+	if (last->Next->element != NULL)
+		printf("\nUspjesno dodan random element na red!\n");
+	last = q;
+
+	/*#### Pomicanje svaki put na kraj pa dodavanje novog ####
 	while (p->Next != NULL)
 		p = p->Next;
-	PushS(p);
+	PushS(p);*/
 }
 
 int Pop(Position p)
@@ -153,6 +169,8 @@ Position AllocationMem()
 {
 	Position el;
 	el = (Position)malloc(sizeof(_cvor));
+	if (el == NULL)
+		printf("\nGRESKA U ALOKACIJI!!!\n");
 	return el;
 }
 
