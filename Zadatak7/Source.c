@@ -118,7 +118,7 @@ void PushS(Position p,int isFull)
 	if (isFull == 1)
 		DropLast(p);
 
-	if (p->Next->element != NULL)
+	if (p->Next != NULL)
 		printf("\nUspjesno dodan random element na stog!\n");
 }
 
@@ -149,7 +149,7 @@ void PushR(Position p)
 
 	q->Next = p->Next;
 	p->Next = q;
-	if (p->Next->element != NULL)
+	if (p->Next != NULL)
 		printf("\nUspjesno dodan random element na red!\n");
 }
 

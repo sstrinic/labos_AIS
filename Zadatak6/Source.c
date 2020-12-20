@@ -98,7 +98,7 @@ void PushS(Position p)
 	q->element = rand() % 90 + 10;
 	q->Next = p->Next;
 	p->Next = q;
-	if (p->Next->element != NULL)
+	if (p->Next != NULL)
 		printf("\nUspjesno dodan random element na niz!\n");
 }
 
@@ -115,7 +115,7 @@ void PushR(Position p)
 	q->element = rand() % 90 + 10;
 	q->Next = last->Next;
 	last->Next = q;
-	if (last->Next->element != NULL)
+	if (last->Next != NULL)
 		printf("\nUspjesno dodan random element na red!\n");
 	last = q;
 
