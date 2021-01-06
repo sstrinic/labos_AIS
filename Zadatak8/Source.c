@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<ctype.h>
 #include<string.h>
+#include<limits.h>
 
 struct Cvor;
 typedef struct Cvor* Position;
@@ -27,7 +28,6 @@ int main()
 {
 	_cvor stog;
 	stog.Next = NULL;
-	printf("Citam i racunam postfix izraz iz datoteke Post.txt...\n");
 	ReadPostfix(&stog);
 	printf("\nRjesenje Postfix izraza iz datoteke Post.txt: \t%.2f \n", Pop(&stog));
 	CheckEnd(&stog);
@@ -46,7 +46,6 @@ void ReadPostfix(Position p)
 	while (!feof(fp))
 	{
 		fscanf(fp, "%s", read);
-		printf("%s", read);
 		if (IsNum(read) == 1)
 			PushS(p, atoi(read));
 		else if (IsOpera(read) == 1)
@@ -56,6 +55,7 @@ void ReadPostfix(Position p)
 			printf("### GRESKA U POSTFIX IZRAZU ###");
 			exit(-1);
 		}
+		printf("%s ", read);
 		strcpy(read, "\0");
 	}
 	fclose(fp);
@@ -64,36 +64,40 @@ void ReadPostfix(Position p)
 void Operations(Position p, char read[])
 {
 	double rez = 0;
-	Position op1 = p->Next;
-	Position op2 = p->Next->Next;
-	
+	double op2 = 1;
+	Position op1 = NULL;
+
+	if ((op2 = Pop(p)) != LONG_MAX)
+	{
+		if (p->Next != NULL)
+			op1 = p->Next;
+		else
+		{
+			printf("\nGRESKA OPERATIONS op1- NE POSTOJI ELEMENT NA STOGU\n");
+			exit(-1);
+		}
+	}
+	else
+	{
+		printf("\nGRESKA OPERATIONS op2- NEUSPJESNO SKIDANJE SA STOGA\n");
+		exit(-1);
+	}
+
 	if (read[0] == '+')
 	{
-		op1->element = op2->element + op1->element;
-		op1->Next = op2->Next;
-		free(op2);
-		printf("\nOPERACIJA + I FREE\n");
+		op1->element += op2;
 	}
 	else if (read[0] == '-')
 	{
-		op1->element = op2->element - op1->element;
-		op1->Next = op2->Next;
-		free(op2);
-		printf("\nOPERACIJA - I FREE\n");
+		op1->element -= op2;
 	}
 	else if (read[0] == '*')
 	{
-		op1->element = op2->element * op1->element;
-		op1->Next = op2->Next;
-		free(op2);
-		printf("\nOPERACIJA * I FREE\n");
+		op1->element *= op2;
 	}
 	else if (read[0] == '/')
 	{
-		op1->element = op2->element / op1->element;
-		op1->Next = op2->Next;
-		free(op2);
-		printf("\nOPERACIJA / I FREE\n");
+		op1->element /= op2;
 	}
 	else
 	{
@@ -108,8 +112,8 @@ void PushS(Position p, double x)
 	q->element = x;
 	q->Next = p->Next;
 	p->Next = q;
-	if (p->Next != NULL)
-		printf("\nUspjesno dodan element %.2f na niz!\n",q->element);
+	//if (p->Next != NULL)
+	//	printf("\nUspjesno dodan element %.2f na niz!\n",q->element);
 }
 
 double Pop(Position p)
@@ -122,14 +126,14 @@ double Pop(Position p)
 		q = p->Next;
 		p->Next = q->Next;
 		free(q);
-		if (x != 0)
-			printf("\nUspjesno skinut element!\n");
+		//if (x != 0)
+		//	printf("\nUspjesno skinut element!\n");
 		return x;
 	}
 	else
 	{
 		printf("Lista je prazna!!");
-		return -1;
+		return LONG_MAX;
 	}
 }
 
@@ -161,10 +165,11 @@ int IsOpera(char text[])
 
 int IsNum(char text[])
 {
-	for (int i = 0; i < strlen(text); i++)
+	for (size_t i = 0; i < strlen(text); i++)
 	{
 		if (isdigit(text[i]) == 0)
-			return 0;
+			if(i == 0 && text[i] != '-')
+				return 0;
 	}
 	return 1;
 }
