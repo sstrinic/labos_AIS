@@ -101,7 +101,7 @@ void ReadPoly(Position P)
 				{
 					P->Next->Koef += q->Koef;
 					free(q);
-					if (P->Koef == 0)
+					if (P->Next->Koef == 0)
 					{
 						q = P->Next;
 						P->Next = q->Next;
